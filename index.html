@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Universe — Explore the World's Leading AI Tools</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            900: '#030712',
+                            800: '#0B0F19',
+                            700: '#111827',
+                            600: '#1F2937',
+                        },
+                        accent: {
+                            cyan: '#00F0FF',
+                            blue: '#3B82F6',
+                            violet: '#8B5CF6',
+                            magenta: '#EC4899',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- GSAP & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #030712;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+        }
+        .glow-effect {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(139,92,246,0.05) 50%, transparent 70%);
+            filter: blur(60px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1F2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+    </style>
+</head>
+<body class="bg-navy-900 text-gray-100 antialiased relative selection:bg-accent-cyan selection:text-navy-900">
+
+    <!-- Ambient Glowing Background Orbs -->
+    <div class="glow-effect top-0 left-1/4 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="glow-effect top-1/3 right-10"></div>
+    <div class="glow-effect top-2/3 left-10"></div>
+    <div class="glow-effect bottom-10 right-1/4"></div>
+
+    <!-- Floating Companion Mascot (SVG Robot) -->
+    <div id="robot-mascot" class="fixed z-50 pointer-events-none transition-transform duration-300 ease-out hidden lg:block" style="width: 100px; height: 120px; top: 120px; right: 40px;">
+        <svg viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+            <!-- Antenna -->
+            <line x1="60" y1="35" x2="60" y2="15" stroke="#3B82F6" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="60" cy="12" r="5" fill="#00F0FF" class="animate-pulse"/>
+            <!-- Head -->
+            <rect x="30" y="35" width="60" height="45" rx="16" fill="#F8FAFC" stroke="#93C5FD" stroke-width="2"/>
+            <!-- Visor/Eyes -->
+            <rect x="40" y="48" width="40" height="20" rx="8" fill="#0B0F19"/>
+            <circle cx="53" cy="58" r="5" fill="#00F0FF" class="animate-ping" style="animation-duration: 3s;"/>
+            <circle cx="53" cy="58" r="4" fill="#00F0FF"/>
+            <circle cx="67" cy="58" r="5" fill="#00F0FF" class="animate-ping" style="animation-duration: 3s;"/>
+            <circle cx="67" cy="58" r="4" fill="#00F0FF"/>
+            <!-- Body -->
+            <rect x="35" y="85" width="50" height="45" rx="12" fill="#F1F5F9" stroke="#93C5FD" stroke-width="2"/>
+            <rect x="45" y="95" width="30" height="20" rx="6" fill="#1E293B"/>
+            <circle cx="60" cy="105" r="4" fill="#8B5CF6" class="animate-pulse"/>
+            <!-- Arms -->
+            <rect x="18" y="90" width="12" height="30" rx="6" fill="#E2E8F0" transform="rotate(10 18 90)"/>
+            <rect x="90" y="90" width="12" height="30" rx="6" fill="#E2E8F0" transform="rotate(-10 90 90)"/>
+        </svg>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-40 transition-all duration-300 glass-panel border-b border-white/5" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-accent-blue to-accent-cyan flex items-center justify-center shadow-lg shadow-accent-cyan/20 group-hover:scale-105 transition-transform">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-navy-900"></i>
+                </div>
+                <span class="font-display font-bold text-xl tracking-tight text-white">AI <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan to-accent-blue">UNIVERSE</span></span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#hero" class="hover:text-accent-cyan transition-colors">Home</a>
+                <a href="#showcase" class="hover:text-accent-cyan transition-colors">AI Tools</a>
+                <a href="#categories" class="hover:text-accent-cyan transition-colors">Categories</a>
+                <a href="#discovery" class="hover:text-accent-cyan transition-colors">Directory</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <a href="#showcase" class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-accent-blue to-accent-violet text-white font-medium text-sm shadow-lg shadow-accent-blue/25 hover:shadow-accent-blue/40 hover:scale-105 transition-all">
+                    <span>Explore AI</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-300 hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 glass-panel border-b border-white/10 px-6 py-4 flex flex-col gap-4">
+            <a href="#hero" class="mobile-link text-gray-300 hover:text-accent-cyan">Home</a>
+            <a href="#showcase" class="mobile-link text-gray-300 hover:text-accent-cyan">AI Tools</a>
+            <a href="#categories" class="mobile-link text-gray-300 hover:text-accent-cyan">Categories</a>
+            <a href="#discovery" class="mobile-link text-gray-300 hover:text-accent-cyan">Directory</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6">
+        <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div class="lg:col-span-7 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-6 border border-accent-cyan/20 animate-pulse">
+                    <i data-lucide="compass" class="w-4 h-4 text-accent-cyan"></i>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-accent-cyan">Explore The World of AI</span>
+                </div>
+                <h1 class="font-display font-bold text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white mb-6 leading-tight">
+                    One Universe. <br class="hidden sm:inline"/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent-cyan via-accent-blue to-accent-violet">Endless Intelligence.</span>
+                </h1>
+                <p class="text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 mb-10 font-normal leading-relaxed">
+                    Discover, compare, and connect with the world's leading artificial intelligence platforms across chat, coding, image generation, video creation, and advanced research in one immersive experience.
+                </p>
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                    <a href="#showcase" class="px-8 py-4 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-blue text-navy-900 font-bold text-base shadow-xl shadow-accent-cyan/20 hover:scale-105 transition-all flex items-center gap-3">
+                        <span>Explore AI Tools</span>
+                        <i data-lucide="rocket" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#discovery" class="px-8 py-4 rounded-xl glass-panel text-white font-medium text-base hover:bg-white/10 transition-all border border-white/10 flex items-center gap-3">
+                        <span>Directory & Search</span>
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </a>
+                </div>
+                <div class="mt-12 flex items-center justify-center lg:justify-start gap-8 text-sm text-gray-400">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-accent-cyan"></i>
+                        <span>15+ Curated Platforms</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-accent-violet"></i>
+                        <span>Verified Direct Links</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Hero Visual Graphic / 3D Composition -->
+            <div class="lg:col-span-5 relative flex items-center justify-center">
+                <div class="relative w-72 h-72 sm:w-96 sm:h-96 rounded-3xl glass-panel p-6 flex flex-col items-center justify-center text-center shadow-2xl overflow-hidden border border-accent-cyan/30">
+                    <div class="absolute inset-0 bg-gradient-to-br from-accent-cyan/10 via-transparent to-accent-violet/10"></div>
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center mb-6 shadow-xl shadow-accent-cyan/30 animate-bounce" style="animation-duration: 4s;">
+                        <i data-lucide="cpu" class="w-10 h-10 text-navy-900"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-2xl text-white mb-2">Next-Gen AI Nexus</h3>
+                    <p class="text-sm text-gray-400">Your interactive gateway to artificial intelligence excellence.</p>
+                    <div class="mt-6 flex gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-accent-cyan animate-ping"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-accent-violet"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-accent-blue"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Search & Filter Bar -->
+    <section class="py-8 bg-navy-800/50 border-y border-white/5 sticky top-20 z-30 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="relative w-full md:w-96">
+                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                <input type="text" id="ai-search-input" placeholder="Search AI tools (e.g. ChatGPT, Claude...)" class="w-full bg-navy-900 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-sm text-white focus:outline-none focus:border-accent-cyan transition-colors">
+            </div>
+            <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="category-filters">
+                <button data-category="all" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider bg-accent-cyan text-navy-900 transition-all whitespace-nowrap">All Tools</button>
+                <button data-category="Assistant" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap">Assistants</button>
+                <button data-category="Research" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap">Research</button>
+                <button data-category="Coding" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap">Coding</button>
+                <button data-category="Image" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap">Image</button>
+                <button data-category="Video" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap">Video</button>
+                <button data-category="Audio" class="category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap">Audio</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Showcase Section (Alternating Left/Right) -->
+    <section id="showcase" class="py-24 px-6 relative">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <h2 class="font-display font-bold text-3xl sm:text-5xl text-white mb-6">Featured AI Platforms</h2>
+                <p class="text-gray-400 text-base sm:text-lg">Explore the industry giants and specialized models shaping the future of human capability.</p>
+            </div>
+
+            <!-- Dynamic Showcase Container -->
+            <div id="ai-showcase-container" class="space-y-24">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Grid Section -->
+    <section id="categories" class="py-24 px-6 bg-navy-800/30 border-y border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-4">Explore by Category</h2>
+                <p class="text-gray-400">Navigate specialized intelligence domains tailored for your workflow.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer" onclick="filterByCategory('Assistant')">
+                    <div class="w-14 h-14 rounded-xl bg-accent-blue/10 flex items-center justify-center text-accent-blue mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="message-square-code" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2">AI Assistants</h3>
+                    <p class="text-sm text-gray-400 mb-4">General-purpose conversational models for reasoning, brainstorming, and writing.</p>
+                    <span class="text-xs font-semibold text-accent-cyan flex items-center gap-1 group-hover:translate-x-1 transition-transform">Explore category <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </div>
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer" onclick="filterByCategory('Research')">
+                    <div class="w-14 h-14 rounded-xl bg-accent-cyan/10 flex items-center justify-center text-accent-cyan mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="book-open-check" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2">Research & Productivity</h3>
+                    <p class="text-sm text-gray-400 mb-4">Advanced engines for web search synthesis, document analysis, and knowledge notes.</p>
+                    <span class="text-xs font-semibold text-accent-cyan flex items-center gap-1 group-hover:translate-x-1 transition-transform">Explore category <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </div>
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer" onclick="filterByCategory('Coding')">
+                    <div class="w-14 h-14 rounded-xl bg-accent-violet/10 flex items-center justify-center text-accent-violet mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="terminal" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2">Coding & Development</h3>
+                    <p class="text-sm text-gray-400 mb-4">AI pair programmers and code generation tools for accelerated software engineering.</p>
+                    <span class="text-xs font-semibold text-accent-cyan flex items-center gap-1 group-hover:translate-x-1 transition-transform">Explore category <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </div>
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer" onclick="filterByCategory('Image')">
+                    <div class="w-14 h-14 rounded-xl bg-accent-magenta/10 flex items-center justify-center text-accent-magenta mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="image" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2">Image Generation</h3>
+                    <p class="text-sm text-gray-400 mb-4">Text-to-image synthesizers and creative photo manipulation toolkits.</p>
+                    <span class="text-xs font-semibold text-accent-cyan flex items-center gap-1 group-hover:translate-x-1 transition-transform">Explore category <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </div>
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer" onclick="filterByCategory('Video')">
+                    <div class="w-14 h-14 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="video" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2">Video Generation</h3>
+                    <p class="text-sm text-gray-400 mb-4">Cinematic video creation, motion effects, and realistic generative scenes.</p>
+                    <span class="text-xs font-semibold text-accent-cyan flex items-center gap-1 group-hover:translate-x-1 transition-transform">Explore category <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </div>
+                <div class="glass-card p-8 rounded-2xl group cursor-pointer" onclick="filterByCategory('Audio')">
+                    <div class="w-14 h-14 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="mic" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-xl text-white mb-2">Audio & Voice</h3>
+                    <p class="text-sm text-gray-400 mb-4">Ultra-realistic voice cloning, speech synthesis, and audio production models.</p>
+                    <span class="text-xs font-semibold text-accent-cyan flex items-center gap-1 group-hover:translate-x-1 transition-transform">Explore category <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Discovery Directory Grid -->
+    <section id="discovery" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
+                <div>
+                    <h2 class="font-display font-bold text-3xl sm:text-4xl text-white mb-3">Quick AI Directory</h2>
+                    <p class="text-gray-400">All tools indexed for rapid access and direct connection.</p>
+                </div>
+                <span id="tool-count" class="text-sm font-semibold text-accent-cyan px-4 py-2 rounded-lg glass-panel">Showing all tools</span>
+            </div>
+            <div id="directory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-24 px-6 relative overflow-hidden bg-gradient-to-b from-navy-900 to-navy-800 border-t border-white/5">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1)_0,transparent_70%)]"></div>
+        <div class="max-w-5xl mx-auto text-center relative z-10 glass-panel p-12 sm:p-16 rounded-3xl border border-accent-cyan/20 shadow-2xl">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-accent-cyan to-accent-blue flex items-center justify-center mx-auto mb-8 shadow-xl shadow-accent-cyan/20">
+                <i data-lucide="sparkles" class="w-8 h-8 text-navy-900"></i>
+            </div>
+            <h2 class="font-display font-bold text-3xl sm:text-5xl text-white mb-6">Your Next Great Idea Starts With AI.</h2>
+            <p class="text-gray-300 text-base sm:text-lg max-w-2xl mx-auto mb-10">
+                Step into the future with tools designed to elevate your creativity, productivity, and technical potential.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <a href="#showcase" class="px-8 py-4 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-blue text-navy-900 font-bold text-base shadow-xl shadow-accent-cyan/20 hover:scale-105 transition-all flex items-center gap-2">
+                    <span>Explore AI Universe</span>
+                    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+                </a>
+                <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" class="px-8 py-4 rounded-xl glass-panel text-white font-medium text-base hover:bg-white/10 transition-all border border-white/10 flex items-center gap-2">
+                    <span>Launch ChatGPT</span>
+                    <i data-lucide="external-link" class="w-5 h-5"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 border-t border-white/10 py-16 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            <div class="md:col-span-2">
+                <a href="#" class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-accent-blue to-accent-cyan flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-navy-900"></i>
+                    </div>
+                    <span class="font-display font-bold text-lg text-white">AI UNIVERSE</span>
+                </a>
+                <p class="text-sm text-gray-400 max-w-sm mb-6 leading-relaxed">
+                    A premium interactive digital showcase for discovering the world's most innovative artificial intelligence platforms.
+                </p>
+                <div class="text-xs text-gray-500">
+                    © 2026 AI Universe. All rights reserved.
+                </div>
+            </div>
+            <div>
+                <h4 class="font-display font-semibold text-white mb-4 text-sm uppercase tracking-wider">Navigation</h4>
+                <ul class="space-y-2.5 text-sm text-gray-400">
+                    <li><a href="#hero" class="hover:text-accent-cyan transition-colors">Home</a></li>
+                    <li><a href="#showcase" class="hover:text-accent-cyan transition-colors">AI Tools</a></li>
+                    <li><a href="#categories" class="hover:text-accent-cyan transition-colors">Categories</a></li>
+                    <li><a href="#discovery" class="hover:text-accent-cyan transition-colors">Directory</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-display font-semibold text-white mb-4 text-sm uppercase tracking-wider">Disclaimer</h4>
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    AI products, availability, trademarks, and features may change. All platform logos and names belong to their respective owners.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Data & Logic -->
+    <script>
+        const aiTools = [
+            {
+                name: "ChatGPT",
+                category: "Assistant",
+                url: "https://chatgpt.com/",
+                description: "OpenAI's flagship conversational AI model capable of reasoning, complex problem-solving, creative writing, and multimodal interactions.",
+                features: ["Advanced reasoning & analysis", "Multimodal voice & vision", "Custom GPTs & extensions"],
+                icon: "message-square",
+                color: "from-emerald-500/20 to-teal-500/25"
+            },
+            {
+                name: "Google Gemini",
+                category: "Assistant",
+                url: "https://gemini.google.com/",
+                description: "Google's most capable AI assistant built natively multimodal to seamlessly reason across text, code, images, audio, and video.",
+                features: ["Deep Google Workspace integration", "Massive context window", "Real-time web synthesis"],
+                icon: "sparkles",
+                color: "from-blue-500/20 to-cyan-500/25"
+            },
+            {
+                name: "Claude",
+                category: "Assistant",
+                url: "https://claude.ai/",
+                description: "Anthropic's advanced AI assistant known for exceptional nuance, long-form document analysis, and human-like conversational tone.",
+                features: ["Artifacts for interactive coding", "Superior text comprehension", "Constitutional AI safety"],
+                icon: "cpu",
+                color: "from-amber-500/20 to-orange-500/25"
+            },
+            {
+                name: "Microsoft Copilot",
+                category: "Assistant",
+                url: "https://copilot.microsoft.com/",
+                description: "Your everyday AI companion powered by OpenAI models, integrated seamlessly across Windows, Office, and the web.",
+                features: ["Office 365 integration", "Web grounding with Bing", "Enterprise-grade security"],
+                icon: "layout-grid",
+                color: "from-blue-600/20 to-indigo-600/25"
+            },
+            {
+                name: "Perplexity",
+                category: "Research",
+                url: "https://www.perplexity.ai/",
+                description: "An AI conversational search engine that delivers accurate, up-to-date answers with complete source citations.",
+                features: ["Real-time web search", "Source citation transparency", "Pro search reasoning engine"],
+                icon: "search",
+                color: "from-cyan-500/20 to-blue-500/25"
+            },
+            {
+                name: "DeepSeek",
+                category: "Coding",
+                url: "https://chat.deepseek.com/",
+                description: "State-of-the-art open-weights reasoning model specializing in advanced mathematics, logic, and programming tasks.",
+                features: ["DeepSeek-R1 reasoning engine", "Exceptional coding benchmarks", "Cost-efficient performance"],
+                icon: "terminal",
+                color: "from-indigo-500/20 to-violet-500/25"
+            },
+            {
+                name: "Grok",
+                category: "Assistant",
+                url: "https://grok.com/",
+                description: "xAI's witty conversational assistant with real-time access to global information and uninhibited reasoning capabilities.",
+                features: ["Real-time X data access", "Humorous & direct tone", "Advanced analytical modes"],
+                icon: "zap",
+                color: "from-zinc-500/20 to-slate-500/25"
+            },
+            {
+                name: "Google NotebookLM",
+                category: "Research",
+                url: "https://notebooklm.google.com/",
+                description: "An AI-powered personalized research assistant that turns your documents and notes into an interactive knowledge base.",
+                features: ["Audio Overview podcast generation", "Source-grounded note taking", "Document summarization"],
+                icon: "book-open",
+                color: "from-blue-400/20 to-teal-400/25"
+            },
+            {
+                name: "GitHub Copilot",
+                category: "Coding",
+                url: "https://github.com/features/copilot",
+                description: "The world's most widely adopted AI programmer assistant that turns natural language prompts into secure, clean code.",
+                features: ["Inline code completion", "Copilot Chat debugging", "Multi-IDE support"],
+                icon: "code",
+                color: "from-purple-500/20 to-pink-500/25"
+            },
+            {
+                name: "Midjourney",
+                category: "Image",
+                url: "https://www.midjourney.com/",
+                description: "An independent generative AI program producing stunning, hyper-realistic, and artistic images from text prompts.",
+                features: ["Photorealistic rendering", "Vibrant artistic styles", "Advanced image prompting"],
+                icon: "image",
+                color: "from-purple-600/20 to-indigo-600/25"
+            },
+            {
+                name: "Adobe Firefly",
+                category: "Image",
+                url: "https://firefly.adobe.com/",
+                description: "Adobe's creative generative AI family built directly into creative workflows with commercially safe training models.",
+                features: ["Generative Fill & Expand", "Commercial safety guarantee", "Vector & text effects"],
+                icon: "palette",
+                color: "from-red-500/20 to-orange-500/25"
+            },
+            {
+                name: "Ideogram",
+                category: "Image",
+                url: "https://ideogram.ai/",
+                description: "A specialized AI image generator renowned for precise typography, text rendering, and graphic design layouts.",
+                features: ["Flawless text rendering in images", "Graphic design flexibility", "Prompt adherence"],
+                icon: "type",
+                color: "from-pink-500/20 to-rose-500/25"
+            },
+            {
+                name: "Runway",
+                category: "Video",
+                url: "https://runwayml.com/",
+                description: "Applied AI research company building generative video models like Gen-3 Alpha for cinematic storytelling.",
+                features: ["Gen-3 Alpha video generation", "Motion brush controls", "Professional video editing suite"],
+                icon: "video",
+                color: "from-violet-600/20 to-purple-600/25"
+            },
+            {
+                name: "Google Flow",
+                category: "Video",
+                url: "https://labs.google/fx/tools/flow",
+                description: "Google Labs' experimental generative media toolkit for creating dynamic visual flows and motion artwork.",
+                features: ["Experimental video creation", "Seamless Google Labs workflow", "Creative visual loops"],
+                icon: "film",
+                color: "from-blue-500/20 to-emerald-500/25"
+            },
+            {
+                name: "ElevenLabs",
+                category: "Audio",
+                url: "https://elevenlabs.io/",
+                description: "The leading voice AI platform for ultra-realistic text-to-speech, voice cloning, and multilingual audio dubbing.",
+                features: ["Hyper-realistic voice synthesis", "Instant voice cloning", "Multilingual speech generation"],
+                icon: "mic",
+                color: "from-yellow-500/20 to-amber-500/25"
+            }
+        ];
+
+        // Render Showcase (Alternating Left / Right)
+        function renderShowcase(toolsToRender) {
+            const container = document.getElementById('ai-showcase-container');
+            container.innerHTML = '';
+
+            toolsToRender.forEach((tool, index) => {
+                const isEven = index % 2 === 0;
+                const showcaseItem = document.createElement('div');
+                showcaseItem.className = `glass-panel p-8 sm:p-12 rounded-3xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border border-white/10 relative overflow-hidden group`;
+                
+                showcaseItem.innerHTML = `
+                    <div class="absolute inset-0 bg-gradient-to-br ${tool.color} opacity-30 pointer-events-none"></div>
+                    
+                    <div class="lg:col-span-6 ${isEven ? 'lg:order-1' : 'lg:order-2'} space-y-6 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl glass-card flex items-center justify-center text-accent-cyan border border-accent-cyan/30">
+                                <i data-lucide="${tool.icon}" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full bg-white/5 text-accent-cyan border border-white/10">${tool.category}</span>
+                        </div>
+                        <h3 class="font-display font-bold text-3xl sm:text-4xl text-white">${tool.name}</h3>
+                        <p class="text-gray-300 text-base leading-relaxed">${tool.description}</p>
+                        <div class="space-y-3 pt-2">
+                            ${tool.features.map(feat => `
+                                <div class="flex items-center gap-3 text-sm text-gray-300">
+                                    <div class="w-5 h-5 rounded-full bg-accent-cyan/10 flex items-center justify-center text-accent-cyan flex-shrink-0">
+                                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                    </div>
+                                    <span>${feat}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="pt-4">
+                            <a href="${tool.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent-cyan to-accent-blue text-navy-900 font-semibold text-sm shadow-lg shadow-accent-cyan/20 hover:scale-105 transition-all">
+                                <span>Explore ${tool.name}</span>
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 ${isEven ? 'lg:order-2' : 'lg:order-1'} relative z-10 flex items-center justify-center">
+                        <div class="w-full h-72 sm:h-80 rounded-2xl glass-card flex flex-col items-center justify-center text-center p-6 border border-white/10 relative group-hover:border-accent-cyan/40 transition-colors">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent-blue/20 to-accent-violet/20 flex items-center justify-center mb-4 text-accent-cyan shadow-inner">
+                                <i data-lucide="${tool.icon}" class="w-10 h-10"></i>
+                            </div>
+                            <h4 class="font-display font-bold text-xl text-white mb-2">${tool.name} Nexus</h4>
+                            <p class="text-xs text-gray-400 max-w-xs">Official ${tool.category} platform providing next-generation artificial intelligence capabilities.</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(showcaseItem);
+            });
+            lucide.createIcons();
+        }
+
+        // Render Directory Grid
+        function renderDirectory(toolsToRender) {
+            const grid = document.getElementById('directory-grid');
+            document.getElementById('tool-count').innerText = `Showing ${toolsToRender.length} tools`;
+            grid.innerHTML = '';
+
+            toolsToRender.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-6 rounded-2xl flex flex-col justify-between group';
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 rounded-lg glass-card flex items-center justify-center text-accent-cyan border border-white/10">
+                                <i data-lucide="${tool.icon}" class="w-5 h-5"></i>
+                            </div>
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-white/5 text-gray-400 border border-white/5">${tool.category}</span>
+                        </div>
+                        <h3 class="font-display font-bold text-xl text-white mb-2">${tool.name}</h3>
+                        <p class="text-sm text-gray-400 mb-6 line-clamp-2">${tool.description}</p>
+                    </div>
+                    <div class="pt-4 border-t border-white/5 flex items-center justify-between">
+                        <a href="${tool.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-accent-cyan hover:underline flex items-center gap-1.5">
+                            <span>Visit Official Site</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                        </a>
+                        <span class="text-xs text-gray-500">Verified</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        // Filter and Search Logic
+        let activeCategory = 'all';
+        let searchQuery = '';
+
+        function filterTools() {
+            let filtered = aiTools;
+            if (activeCategory !== 'all') {
+                filtered = filtered.filter(t => t.category === activeCategory);
+            }
+            if (searchQuery.trim() !== '') {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(t => t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q));
+            }
+            renderDirectory(filtered);
+        }
+
+        function filterByCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.getAttribute('data-category') === cat) {
+                    btn.className = 'category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider bg-accent-cyan text-navy-900 transition-all whitespace-nowrap';
+                } else {
+                    btn.className = 'category-btn px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider glass-panel text-gray-300 hover:text-white transition-all whitespace-nowrap';
+                }
+            });
+            filterTools();
+            const discoverySection = document.getElementById('discovery');
+            discoverySection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Event Listeners
+        document.getElementById('ai-search-input').addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            filterTools();
+        });
+
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cat = btn.getAttribute('data-category');
+                filterByCategory(cat);
+            });
+        });
+
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // Initialize App
+        window.addEventListener('DOMContentLoaded', () => {
+            renderShowcase(aiTools);
+            renderDirectory(aiTools);
+            lucide.createIcons();
+
+            // GSAP ScrollTrigger Robot Mascot Animation
+            if (window.innerWidth >= 1024 && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+                
+                gsap.to('#robot-mascot', {
+                    scrollTrigger: {
+                        trigger: '#showcase',
+                        start: 'top center',
+                        end: 'bottom center',
+                        scrub: 1,
+                    },
+                    y: 1800,
+                    ease: 'none'
+                });
+            }
+        });
+    </script>
+</body>
+</html>
